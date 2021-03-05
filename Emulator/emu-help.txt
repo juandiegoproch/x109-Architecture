@@ -1,0 +1,10 @@
+compile with gcc
+usage
+./emulator [raw_memory_file] [-d]
+NOTICE:
+	system memory is initialized to zeros. When the memory at 0xFFFF is not 0, the program terminates
+	it is entirely possible that the loaded program never writes to 0xFFFF so it may get stuck! In this case, memory wont be dumped to a file.
+raw_memory_file:
+	uint16_t raw file that directly maps to system memory
+-d
+	dump memory when done

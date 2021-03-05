@@ -1,0 +1,11 @@
+The assembler is a wip :( . You may see many bugs. 
+The assembler takes x109 assembly and translates it to machine code
+compile with gcc
+an example x109 assembly program is on this folder.
+usage
+./assemble [assmFile] [programName]
+
+assmFile:
+	name of existing file containing x109 assembly code.
+programName
+	name of file to be created that contains the assembled instructions ready to be loaded to the emulator.
