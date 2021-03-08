@@ -66,6 +66,7 @@ BEQ OP1 OP2      | 0b1 000 0011 OP1 OP2 01
 BLE OP1 OP2      | 0b1 000 0011 OP1 OP2 11
 
 So these are basically assembly mnemonics for usefull instructions.
+Even if it is possible to use other non-documented pseudoinstructions I recommend that you dont, as those ALU configurations are liable to change in order to impement new features into the ISA.
 
 
 You should now understand how this machine operates at the lowest level unless I have missed something.
