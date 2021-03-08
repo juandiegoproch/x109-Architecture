@@ -1,7 +1,0 @@
-LDL ML,0xFF; start adress 255
-LDL R0,0xFF; load r0
-LDM R0,0xFF; load r0 0xFFFF
-ADD MD,ZR,R0;
-INC ML,ZR,ML;
-LDL PC,0x04; jump to 4
-
