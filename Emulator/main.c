@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <signal.h>
 
 #include "declarations.h"
 
@@ -9,6 +10,10 @@
 
 int main(int argc,char* argv[])
 {
+	// Bind Signal handler
+	
+	  signal(SIGINT,(void*)userInterruptHandler);
+	
 	// Get CLI arguents
 	char* fileToRead = NULL;
 	bool dumpRam = false;

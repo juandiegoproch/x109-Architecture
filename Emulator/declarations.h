@@ -6,14 +6,14 @@
 #define RAMSIZE 65535
 #define REGISTERNUM 8
 
-#define PC (uint16_t)7
-#define JR (uint16_t)6
-#define ML (uint16_t)5
-#define R2 (uint16_t)4
-#define R1 (uint16_t)3
-#define R0 (uint16_t)2
-#define MD (uint16_t)1
-#define ZR (uint16_t)0
+#define PC 7
+#define JR 6
+#define ML 5
+#define R2 4
+#define R1 3
+#define R0 2
+#define MD 1
+#define ZR 0
 
 // Functions
 
@@ -41,6 +41,10 @@ uint16_t fetchInstruction();
 
 void executeAluOpInstruction(uint16_t instruction);
 void executeMLoadInstruction(uint16_t instruction);
+
+// Signal Handling
+
+int userInterruptHandler(int signum);
 
 // Globals
 extern uint16_t memory[RAMSIZE];
