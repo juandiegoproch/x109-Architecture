@@ -1,4 +1,6 @@
- int getinstfromfile(FILE* file,char buffer[])
+#include <stdio.h>
+
+int getinstfromfile(FILE* file,char buffer[])
 {
 	int currentchar = 0;
 	for(int i = 0; (currentchar = getc(file)) != '\n';i++)

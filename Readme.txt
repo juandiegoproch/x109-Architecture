@@ -5,7 +5,7 @@ This machine is a 16 bit von neumann architecture, wich means that both memory a
 REGISTERS:
 There are 8 cpu registers ( in order from 0 to 7: ZR,MD,R0,R1,R2,ML,JR and PC) all of wich can be accesed by any instruction, however some of these registers have special behaviour.
 ZR (Zero Register) yields allways zero when read, but moving a value into the register is undefined.
-MD (Memory Data) is an access window to system memory, to the adress pointed to by ML (Memory Location)
+SP (Stack Pointer) is the location of the top of the stack, wich grows from high to low memory addresses.
 JR (Jump Register) this register holds the value that the cpu will go to if a conditional branch is executed.
 PC (Program Counter) This holds the adress of the next instruction to be executed
 
@@ -14,7 +14,7 @@ Registers are specified by their 3 bit ID, shown below:
  Reg| Decimal |  Binary |
 __________________________
  ZR |    0    |   000   |
- MD |    1    |   001   |
+ SP |    1    |   001   |
  R0 |    2    |   010   |
  R1 |    3    |   011   |
  R2 |    4    |   100   |
@@ -43,11 +43,14 @@ The Load instruction is pretty self explainatory if you take into account the fa
 The Operation instruction is more complex. It stores the result of an operation between operand 1 and operand 2 according to the alu configuration into the store register. Also, if any of the branch flags are set, the instruction will check if the corresponding alu flag is set, if so it will copy the JR's contents to the PC.
 Basically, the "branching" considers the alu flag only if the branch flag that corresponds to that one is set. The logic is (alu flag & branch flag) | (other alu flag & other branch flag).
 
+The LD instructions also are the way that the CPU interacts with RAM, and the LDM and STM instructions read into a register or store the value of aregister into a ram adress given as an offset of ML.
+
+Recently, the PUSH and POP instructions have been added to the architecture under the LD opcode. These instructions facilitate stack operations.
    PSEUDOINSTRUCTIONS
 At this point you should be able to read binary instructions for the cpu. However you may have noticed that these real instructions are not so helpfull.
 Here come Pseudoinstructions.
 Pseudoinstructions are particular configurations of an instruction that do defined tasks, like copy a register's value to another register, or increment a register, etc.
-Here are all of them
+Here are all of them.
 
  MNEMONIC/EXAMPLE|    BINARY TRANSLATION   
 ___________________________________________
@@ -59,11 +62,15 @@ LOR STR OP1 OP2  | 0b1 STR 1000 OP1 OP2 00
 ADI STR OP1 OP2  | 0b1 STR 0001 OP1 OP2 00
 INC STR OP1 OP2  | 0b1 STR 0101 000 OP1 00
 DEC STR OP1 OP2  | 0b1 STR 0110 000 OP1 00
-LDL STR (8bHEX)  | 0b0 STR 0000  8-bit-lit
-LDM STR (8bHEX)	 | 0b0 STR 0100  8-bit-lit
+LDL STR  (8bHEX) | 0b0 STR 0000  8-bit-lit
+LDM STR  (8bHEX) | 0b0 STR 0100  8-bit-lit
 BNE OP1 OP2      | 0b1 000 0011 OP1 OP2 10
 BEQ OP1 OP2      | 0b1 000 0011 OP1 OP2 01
 BLE OP1 OP2      | 0b1 000 0011 OP1 OP2 11
+PUSH OP1 (8bHEX) | 0b0 OP1 1010   00000000
+POP  OP1 (8bHEX) | 0b0 OP1 0010   00000000
+ST   OP1 (8bHEX) | 0b0 OP1 1001  8-bit-lit
+LD   OP1 (8bHEX) | 0b0 OP1 0001  8-bit-lit
 
 So these are basically assembly mnemonics for usefull instructions.
 Even if it is possible to use other non-documented pseudoinstructions I recommend that you dont, as those ALU configurations are liable to change in order to impement new features into the ISA.

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "definitions.h"
 
@@ -19,29 +20,42 @@ Assume a buffer that can hold each word that exists in the inst
 
 detect if in word by detecting if you are in a whitespace or a non whitespace
 
-while you are in word, keep track on where you arein the word, copy to buffer
+while you are in word, keep track on where you are in the word, copy to buffer
 
 if you get out of the word reset the index of where you are in the word
 */
+	//DEBUG PRINT STATEMENTS
+	
+	printf(instruction);
+
 	int wordNumber = 0;
 	int inWordIndex = 0;
-	char currentChar = instruction[0];
-	int inWord = !isWhitespace(instruction[0]);
-	for(int i=0;!(*(instruction+i) == ';' || *(instruction+i) == '\0') ;i++)
+	char currentChar;
+	bool inWord = !isWhitespace(instruction[0]);
+	bool inString = false;
+	for(int i=0;(currentChar = instruction[i]) != ';' || currentChar != '\0' ;i++)
 	{
-	currentChar = instruction[i];
-	if (isWhitespace(currentChar))
+		if (currentChar == ';' || currentChar == '\n') break; // Weird fix taht shouldnt be f***ng necesary, but for loop refuses to terminate and im tired
+		
+		if (currentChar == '"') 
 		{
-			if (inWord) wordNumber++;
-			inWord = false;
-			inWordIndex = 0;
+			inString = !inString; // set the state to true when " encountered, then, on next " set to false
+			continue;
 		}
+		
+		if (isWhitespace(currentChar) && !inString) // if (currentchar is white and we are not in string.
+			{
+				
+				if (inWord) wordNumber++;
+				inWord = false;
+				inWordIndex = 0;
+			}
 		else
-		{
-			inWord = true;
-			*(*(buffer+wordNumber)+inWordIndex) = currentChar;
-			inWordIndex++;
-		}
+			{
+				inWord = true;
+				buffer[wordNumber][inWordIndex] = currentChar;
+				inWordIndex++;
+			}
 	}
 	return wordNumber;
 }

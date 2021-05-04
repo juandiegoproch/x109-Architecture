@@ -1,0 +1,1 @@
+gcc -g alu.c decode.c fileops.c globals.c instructions.c interruptHandler.c main.c parseCliArgs.c registers.c debugTools.c -o xonemu

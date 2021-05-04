@@ -4,8 +4,9 @@
 #define true 1
 #define false 0
 
+#define MAXRAM 65536
 #define MAXTOKENS 4
-#define MAXTOKENLEN 5
+#define MAXTOKENLEN 65536
 
 #define STL_OFFSET 12
 #define OP1_OFFSET 5
@@ -18,7 +19,7 @@
 #define R2 (uint16_t)4
 #define R1 (uint16_t)3
 #define R0 (uint16_t)2
-#define MD (uint16_t)1
+#define SP (uint16_t)1
 #define ZR (uint16_t)0
 
 // Masks for instructions just needing to or in operands
@@ -33,6 +34,10 @@
 #define DEC_MASK	0b1000011000000000
 #define LDL_MASK	0b0000000000000000
 #define LDM_MASK	0b0000010000000000
+#define LD_MASK		0b0000000100000000
+#define ST_MASK		0b0000100100000000
+#define PUSH_MASK	0b0000101000000000
+#define POP_MASK	0b0000001000000000
 #define BNE_MASK	0b1000001100000010
 #define BEQ_MASK	0b1000001100000001
 #define BLE_MASK	0b1000001100000011
@@ -56,9 +61,15 @@ uint16_t assmBle(char* arguments[2]);
 uint16_t assmLdl(char* arguments[2]);
 uint16_t assmLdm(char* arguments[2]);
 
+uint16_t assmPush(char* arguments[1]);
+uint16_t assmPop(char* arguments[1]);
 
+uint16_t assmLd(char* arguments[2]);
+uint16_t assmSt(char* arguments[2]);
+
+uint16_t assmNop(char* arguments[0]);
 // General instruction assembler
-uint16_t assmInstFromTokens(char** tokens);
+uint16_t assmInstFromTokens(char** tokens,int linenumber);
 
 // register translation utility
 uint8_t getRegister(char* regMnemonic_s);
@@ -67,6 +78,11 @@ uint8_t getRegister(char* regMnemonic_s);
 int isWhitespace(char character);
 int gettokens(char** buffer,char* instruction);
 
+
+
+// POSIX FUNCTIONS
+#include <stdio.h>
+size_t getline(char** lineptr, size_t* n, FILE* stream);
 
 ////////////////////////////////////////////////////////////////////////////////
 #endif

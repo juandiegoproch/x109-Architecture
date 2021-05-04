@@ -16,7 +16,7 @@ int userInterruptHandler(int signum)
 	printf("R2: %x \n",registers[R2]);
 	printf("R1: %x \n",registers[R1]);
 	printf("R0: %x \n",registers[R0]);
-	printf("MD: %x \n",registers[MD]);
+	printf("SP: %x \n",registers[SP]);
 	printf("ZR: %x \n",registers[ZR]);
 	
 	exit(0xEE);

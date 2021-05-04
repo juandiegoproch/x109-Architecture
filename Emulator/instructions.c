@@ -2,8 +2,11 @@
 #include "declarations.h"
 
 // MLOAD defines
-#define MLOAD_CONFIG_LDL 0b00000000
-#define MLOAD_CONFIG_LDM 0b00000100
+#define MLOAD_CONFIG_MSB_MASK 		0b0000010000000000
+#define MLOAD_CONFIG_STACKOP_MASK	0b0000001000000000
+#define MLOAD_CONFIG_STORE_MASK 	0b0000100000000000
+#define MLOAD_ADDRESSING_MASK		0b0000000100000000
+
 
 #define CLR_MSB_MASK 0b0000000011111111
 #define CLR_LSB_MASK 0b1111111100000000
@@ -64,21 +67,55 @@ void executeAluOpInstruction(uint16_t instruction)
 
 void executeMLoadInstruction(uint16_t instruction)
 {
+	bool msb 					= (bool)(instruction & MLOAD_CONFIG_MSB_MASK);
+	bool store 					= (bool)(instruction & MLOAD_CONFIG_STORE_MASK);
+	bool indirect_addressing	= (bool)(instruction & MLOAD_ADDRESSING_MASK);
+	bool stack_operation 		= (bool)(instruction & MLOAD_CONFIG_STACKOP_MASK);
 
-	bool msb = (instruction >> 8) & MLOAD_CONFIG_LDM; // Get if the instruction should load the msb
-	uint8_t storeLocation = decodeStoreReg(instruction); // Get where to store
-	uint16_t valueToStore = (instruction & MLOAD_IMMEDIATEV_MASK); //get the value o be stored
+	uint8_t operand_register = decodeStoreReg(instruction);
+	uint8_t immediate_val = (instruction & MLOAD_IMMEDIATEV_MASK);
+
+	if (stack_operation)
+	{
+		uint16_t spval = registerop(SP,'r',0);
+		if (store)
+		{
+			// Push
+			memory[spval] = registerop(operand_register,'r',0);
+			registerop(SP,'w',--spval);
+			return;
+		}
+		else
+		{
+			// Pop
+			registerop(operand_register,'w',memory[spval]);
+			registerop(SP,'w',++spval);
+			return;
+		}
+	}
 	
-	valueToStore <<= (msb*8); // Shift the value to the msb if so required
-	uint16_t currentRegisterValue = registerop(storeLocation,'r',0); // fetch the current stored value on the target reg
-	
-	if (msb) // clear the byte to be written to while preserving the other one, then store the value
-	valueToStore = (currentRegisterValue & CLR_MSB_MASK) | valueToStore; 
-	else
-		valueToStore = (currentRegisterValue & CLR_LSB_MASK) | valueToStore;
-	registerop(storeLocation,'w',valueToStore); // write the computed value
-
-
+	if (indirect_addressing) // Memory Operation 128W up/down
+	{
+		
+		uint16_t memory_address = registerop(ML,'r',0) - immediate_val;
+		if (store)
+		{
+			//Store
+			memory[memory_address] = registerop(operand_register,'r',0);
+			return;
+		}
+		else
+		{
+			//Load
+			registerop(operand_register,'w',memory[memory_address]);
+			return;
+		}
+	}
+	uint16_t valueToStore = immediate_val << (msb*8); // Calculate if MSB should be set
+	uint16_t oldvalue = registerop(operand_register,'r',0); // get the old value
+	if (msb) oldvalue &= CLR_MSB_MASK; else oldvalue&= CLR_LSB_MASK;
+	valueToStore |= oldvalue;
+	registerop(operand_register,'w',valueToStore);
 }
 
 uint16_t fetchInstruction()
