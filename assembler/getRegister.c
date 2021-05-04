@@ -30,9 +30,9 @@ uint8_t getRegister(char* regMnemonic)
 	{
 		return R0;
 	}
-	else if (!strcmp(regMnemonic,"MD"))
+	else if (!strcmp(regMnemonic,"SP"))
 	{
-		return MD;
+		return SP;
 	}
 	else if (!strcmp(regMnemonic,"ZR"))
 	{

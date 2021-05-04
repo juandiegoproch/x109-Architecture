@@ -1,0 +1,11 @@
++ Added output device to xonemu
++ Added PUSH and POP instructions
++ Added Relative memory adressing through
++ Added SP register
+
+- Removed MD register and asociated functionality
+
+xonasm
+
++ Added support for new instructions
++ Added support for assembler directives

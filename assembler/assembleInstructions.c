@@ -188,3 +188,48 @@ uint16_t assmLdm(char* arguments[2]) // Takes 2 arguments
 	
 	return assembledInstruction;
 }
+
+uint16_t assmLd(char* arguments[2])
+{
+	uint16_t storeLocation = getRegister(arguments[0]) << STL_OFFSET;
+	uint8_t literalValue =  (uint8_t)strtoul(arguments[1],NULL,0);
+
+	uint16_t assembledInstruction = (LD_MASK | storeLocation | literalValue);
+
+	return assembledInstruction;
+}
+
+uint16_t assmSt(char* arguments[2])
+{
+	uint16_t storeLocation = getRegister(arguments[0]) << STL_OFFSET;
+	uint8_t literalValue =  (uint8_t)strtoul(arguments[1],NULL,0);
+
+	uint16_t assembledInstruction = (ST_MASK | storeLocation | literalValue);
+
+	return assembledInstruction;
+}
+
+uint16_t assmPush(char* arguments[2])
+{
+	uint16_t storeLocation = getRegister(arguments[0]) << STL_OFFSET;
+	uint8_t literalValue =  (uint8_t)strtoul(arguments[1],NULL,0);
+
+	uint16_t assembledInstruction = (PUSH_MASK | storeLocation | literalValue);
+
+	return assembledInstruction;
+}
+
+uint16_t assmPop(char* arguments[2])
+{
+	uint16_t storeLocation = getRegister(arguments[0]) << STL_OFFSET;
+	uint8_t literalValue =  (uint8_t)strtoul(arguments[1],NULL,0);
+
+	uint16_t assembledInstruction = (POP_MASK | storeLocation | literalValue);
+
+	return assembledInstruction;
+}
+
+uint16_t assmNop(char* arguments[0])
+{
+	return 0b0000000000000000;
+}

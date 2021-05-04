@@ -2,6 +2,7 @@
 #define _DECLARATIONS
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #define RAMSIZE 65535
 #define REGISTERNUM 8
@@ -12,13 +13,13 @@
 #define R2 4
 #define R1 3
 #define R0 2
-#define MD 1
+#define SP 1
 #define ZR 0
 
 // Functions
 
 // command line parsing
-void parseCliArguments(int argc,char* argv[],char** fileToRead, bool* dumpMemoryOption);
+void parseCliArguments(int argc,char* argv[],char** fileToRead, bool* dumpMemoryOption,bool* debug);
 
 // ALU operation (alu.c)
 uint16_t aluOperation(uint8_t aluConfig,uint16_t operand1,uint16_t operand2);
@@ -45,6 +46,12 @@ void executeMLoadInstruction(uint16_t instruction);
 // Signal Handling
 
 int userInterruptHandler(int signum);
+
+
+//debugger functions
+
+void printRegisterValues();
+void securePrintRam(int location, int look_width);
 
 // Globals
 extern uint16_t memory[RAMSIZE];

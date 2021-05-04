@@ -1,0 +1,1 @@
+gcc -g assembleInstruction.c assembleInstructions.c assembler.c fileops.c getRegister.c tokenize.c POSIX.c -o xonasm
