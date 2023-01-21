@@ -1,3 +1,5 @@
+### NOTICE: Due to my terrible ability to write documentation this particular piece is not up-to-date with several major features implemented for the cpu. 
+
 I am terrible writing formal documentation, so here is a more casual explaination of the cpu and its instruction set
 
 This machine is a 16 bit von neumann architecture, wich means that both memory and the registers are 16 bits wide, and data and instructions live on the same adress space (IE you can manipulate programs as data).
