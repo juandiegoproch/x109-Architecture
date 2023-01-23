@@ -3,18 +3,26 @@
 
 uint16_t registerop(int reg,char mode,uint16_t value)
 {
-	if (mode == 'r') // Read Operation handler
+	switch (mode)
 	{
+	case 'r':
 		if (reg == ZR) // Zero register handler
 		{
 			return (uint16_t)0x0000;
 		}
+
 		return registers[reg];
-	}
-	else if (mode == 'w')
-	{
+		break;
+	case 'w':
 		registers[reg] = value;
 		return value;
+		break;
+	
+	default:
+		printf("Invalid register access mode");
+		abort();
+		return (uint16_t) 0;
+		break;
 	}
 }
 
