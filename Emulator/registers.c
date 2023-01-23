@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "declarations.h"
 
 uint16_t registerop(int reg,char mode,uint16_t value)

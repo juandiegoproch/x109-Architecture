@@ -9,41 +9,46 @@
 #define MLOAD 0
 
 void debugConsole()
+{
+	printf("\n Execution Halted \n");
+	char command;
+	static char lastcommand = ' ';
+	while ((command = getchar()) != 'n')
+	{
+		switch (command)
 		{
-			printf("\n Execution Halted \n");
-			char command;
-			while ((command = getchar()) != 'n')
+			case 'r':
 			{
-				switch (command)
-				{
-					case 'r':
-					{
-						printRegisterValues();
-						break;
-					}
-					case 'm':
-					{
-						securePrintRam(registerop(ML,'r',0),5);
-						break;
-					}
-					case 's':
-					{
-						securePrintRam(registerop(SP,'r',0),5);
-						break;
-					}
-					case 'i':
-					{
-						securePrintRam(registerop(PC,'r',0),5);
-						break;
-					}
-					default:
-						printf("Debug command not recognised \n");
-				}
-				fflush(stdin);
+				printRegisterValues();
+				break;
 			}
-			fflush(stdin);
-
+			case 'm':
+			{
+				securePrintRam(registerop(ML,'r',0),5);
+				break;
+			}
+			case 's':
+			{
+				securePrintRam(registerop(SP,'r',0),5);
+				break;
+			}
+			case 'i':
+			{
+				securePrintRam(registerop(PC,'r',0),5);
+				break;
+			}
+			case 'n':
+			{
+				; // pass
+			}
+			default:
+				printf("Debug command not recognised \n");
 		}
+		fflush(stdin);
+	}
+	fflush(stdin);
+
+}
 
 int main(int argc,char* argv[])
 {
@@ -83,6 +88,9 @@ int main(int argc,char* argv[])
 		{
 			executeMLoadInstruction(currentInstruction);
 		}
+
+		// set cpu speed (time it takes for instruction to run)
+		Sleep(1);
 	}
 	
 	printf("Program halted with code %x \n",memory[RAMSIZE]);
