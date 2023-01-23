@@ -10,27 +10,35 @@
 #define DEBUGINFO_FLAG "-g"
 void parseCliArguments(int argc,char* argv[],char** fileToRead, bool* dumpMemoryOption,bool* debuginfo)
 {
-	if (argc > 1)
+
+	*dumpMemoryOption = false;
+	*fileToRead = NULL;
+	for(int i = 1; i<argc;i++)
 	{
-		*fileToRead = argv[1];
-		if (argc > 2)
+		if(argv[i][0] == '-')
 		{
-			for (int i = 2;i < argc;i++)
-				if (!strcmp(DUMP_MEMORY_FLAG,argv[i])) // FLAGS HANDLER
-					*dumpMemoryOption = true;
-				else if(!strcmp(DEBUGINFO_FLAG,argv[i]))
-					*debuginfo = true;
-				else
-				{
-					printf("Invalid flag '%s'",argv[i]);
-					abort();
-				}
+			//its a flag
+			if (!strcmp(DUMP_MEMORY_FLAG,argv[i])) // FLAGS HANDLER
+				*dumpMemoryOption = true;
+			else if(!strcmp(DEBUGINFO_FLAG,argv[i]))
+				*debuginfo = true;
+			else
+			{
+				printf("Invalid flag '%s'",argv[i]);
+				abort();
+			}
 		}
-	}
-	else
-	{
-		*dumpMemoryOption = false;
-		fileToRead = NULL;
+		else
+		{
+			//is a file name
+			if (*fileToRead == NULL)
+				*fileToRead = argv[i];
+			else
+			{
+				printf("Too many arguments %s",argv[i]);
+				abort();
+			}
+		}
 	}
 	
 }

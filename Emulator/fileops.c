@@ -3,18 +3,23 @@
 #include <stdlib.h>
 
 #include "declarations.h"
+#define MEMORY_SIZE_BYTES sizeof(uint16_t)*(RAMSIZE+1)
 
 // Load Memory with data:
 void memload(char* memimage_s)
 {
 	printf("Loading binary file %s \n",memimage_s);
 	FILE* memimage_F = fopen(memimage_s,"r");
+	size_t words_read = 0;
 	if (memimage_F == NULL)
 	{
 		printf("Error reading binary file %s \n",memimage_s);
 		exit(0xBE);
 	}
-	if (fread(memory,sizeof(uint16_t),(RAMSIZE+1),memimage_F) != sizeof(uint16_t)*(RAMSIZE+1)) printf("WARNING: Memory image file provided not long enough to fully initialize memory. \n");
+	if ( (words_read = fread(memory,sizeof(uint16_t),(RAMSIZE+1),memimage_F)) >= (RAMSIZE+1)) 
+		printf("WARNING: Memory image file provided overflowed from memory. \n");
+	else if (words_read < (RAMSIZE+1)) 
+		printf("WARNING: Memory image file provided not long enough to fully initialize memory. \n");
 	fclose(memimage_F);
 }
 // Dump RAM to file

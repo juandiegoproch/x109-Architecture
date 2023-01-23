@@ -11,7 +11,8 @@
 #define CLR_MSB_MASK 0b0000000011111111
 #define CLR_LSB_MASK 0b1111111100000000
 
-#define MLOAD_IMMEDIATEV_MASK 0b0000000011111111
+#define MLOAD_IMMEDIATEV_MASK  0b0000000011111111
+#define MSTACK_IMMEDIATEV_MASK 0b0000000000001111
 
 // ALUOP defines
 
@@ -27,7 +28,7 @@
 void executeAluOpInstruction(uint16_t instruction)
 {
 	// Decode the instruction's arguments
-	// flags
+	// flags for jump
 	bool accountNegative = (instruction & ACCOUNTNEG_MASK) >> ACCOUNTNEG_OFFSET;
 	bool accountZero     = (instruction & ACCOUNTZ_MASK)   >> ACCOUNTZ_OFFSET  ;
 	
@@ -74,30 +75,38 @@ void executeMLoadInstruction(uint16_t instruction)
 
 	uint8_t operand_register = decodeStoreReg(instruction);
 	uint8_t immediate_val = (instruction & MLOAD_IMMEDIATEV_MASK);
+	uint8_t second_nibble_immediateval = (instruction & MSTACK_IMMEDIATEV_MASK);
 
-	if (stack_operation)
+	if (stack_operation && !indirect_addressing)
 	{
+		// we have a stack operation
 		uint16_t spval = registerop(SP,'r',0);
 		if (store)
 		{
 			// Push
-			memory[spval] = registerop(operand_register,'r',0);
 			registerop(SP,'w',--spval);
+			memory[spval] = registerop(operand_register,'r',0) + second_nibble_immediateval;  
 			return;
 		}
 		else
 		{
 			// Pop
-			registerop(operand_register,'w',memory[spval]);
+			registerop(operand_register,'w',memory[spval] + second_nibble_immediateval);
 			registerop(SP,'w',++spval);
 			return;
 		}
-	}
-	
-	if (indirect_addressing) // Memory Operation 128W up/down
+	} 
+	else if (indirect_addressing) // Memory Operation 128W up/down
 	{
-		
-		uint16_t memory_address = registerop(ML,'r',0) - immediate_val;
+		int signed_immediateval = immediate_val;
+			// is negative
+		if (immediate_val>>7)
+		{
+			int signed_immediateval = - (~immediate_val + 1);
+		}
+
+		uint16_t memory_address = (stack_operation?registerop(ML,'r',0):registerop(ML,'r',0)) + signed_immediateval;
+
 		if (store)
 		{
 			//Store
@@ -111,6 +120,7 @@ void executeMLoadInstruction(uint16_t instruction)
 			return;
 		}
 	}
+
 	uint16_t valueToStore = immediate_val << (msb*8); // Calculate if MSB should be set
 	uint16_t oldvalue = registerop(operand_register,'r',0); // get the old value
 	if (msb) oldvalue &= CLR_MSB_MASK; else oldvalue&= CLR_LSB_MASK;

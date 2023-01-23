@@ -28,7 +28,7 @@ uint16_t aluOperation(uint8_t aluConfig,uint16_t operand1,uint16_t operand2)
 	
 	operand1*= !zOperand; 	                 // Z config applied;
 	operand1 = nOperand?~operand1:operand1; // conditional negation of operand 1
-	operand1+= carryIn;                     // add carry to operand
+	operand1+= opType?0:carryIn;                     // add carry to operand if addition is specified
 	
 	// alu operation
 	uint16_t result = opType? (operand1 | operand2):(operand1+operand2); //execute logical or arit operation

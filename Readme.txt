@@ -1,4 +1,203 @@
-### NOTICE: Due to my terrible ability to write documentation this particular piece is not up-to-date with several major features implemented for the cpu. 
+Instructions
+
+#registers
+PC - POINTS TO NEXT INSTRUCTION TO BE EXECUTED
+
+#ALU instruction
+
+BITS FIELDS: (leftmost bits first)
+name      length  value
+OPCODE       1      1
+STREG        3      ID of store register
+ALUCFG       4      ALU configuration flags
+OP1REG       3      ID of operand 1 register
+OP2REG       3      ID of operand 2 register
+ACCOUNTNEG   1      Jump on negative?
+ACCOUNTZ     1      Jump on Zero?
+
+An ALU instruction makes use of the processor's ALU.
+They take 3 arguments, two operands and one storage location.
+They also take a 4 bit ALU configuration.
+    ALU configuration:
+    (leftmost bit first)
+    BIT    Meaning
+    1       operation type: 1 = Bitwise Logical OR, 0 = Addition
+    2       zero out operand1 if set
+    3       negate operand1 if set
+    4       carry in 1 to operand1 (if addition is selected)
+
+The ALU instruction will perform the operation in the ALU. 
+
+If either ACCOUNTNEG or ACCOUNTZ was set,it will jump to the adress in JR if any of the conditions matches. 
+(Formally, jump if ((accountNegative && negativeFlag) || (accountZero && zeroFlag)))
+The result of the operation will be discarded.
+
+If no flags where set, the instruction will evaluate the operands according to the 
+ALU configuration and store the result on the STR register operand.
+
+#LOAD instructions
+
+BITS FIELDS: (leftmost bits first)
+name      length  value
+OPCODE       1      0
+STR          3      ID of store register
+STORE        1      if 1 will store at memory location, if 0 will load from memory location
+MSB          1      if set will load immediate value into msb of register, else lsb
+STACK        1      if 1 will perform a push/pop on the stack or use indirect adressing to fetch/write from SP if ADRESSING also set
+ADRESSING    1      if 1 will use indirect adressing to fetch/write from ML
+IMM 1        4      Immediate value (first nibble)
+IMM 2        4      Immediate value (second nibble)
+
+Load Instructions are of 3 types. Immediate Load, stackop, and indirect_adressing
+
+Immediate Load instructions: (both stackop and adressing flags 0)
+    immediate load instructions take an 8 bit immediate value divided into 2 nibbles, a register, and an msb flag.
+    it will override the msb of the selected register with the immediate value.
+
+stackop (only stackop flag 1)
+    stack operations take a register, the store flag and a 4 bit immediatval stored in the second nibble.
+    if store is 1 they will push the value plus the second nibble immediateval of the selected register into the stack and increment the stack pointer
+    if store is 0 they will pop  the value plus the second nibble immediateval into the selected register and decrement the stack pointer.
+
+indirect adressing: (indirect adressing 1 and stackop either 0 or 1)
+    if stackop is 1 and store is 1 will store the register value into SP+-immediateval (interpreted as a 8bit two's complement)
+    if stackop is 0 and store is 1 will store the register value into ML+-immediateval
+    if stackop is 1 and store is 0 will overwrite the register value from SP+-immediateval (interpreted as a 8bit two's complement)
+    if stackop is 0 and store is 0 will overwrite the register value from ML+-immediateval
+
+
+
+##unimplemented: Attempting a write operation on the zero register will cause an interrupt with the code of the value attempted to be written. Zero values will be ignored
+
+
+##unimplemented: interrupts
+
+interrupts are called immediatelly after a non-zero value INTCODE is written to the zero register.
+
+an interrupt will:
+push the PC to the stack.
+jump to the location specified on INTTABLE + (INTCODE-1).
+
+# Valid instructions and descriptions
+
+
+ADD (add)
+Arguments: 
+STR: Store to register S
+OP1: Operand 1         O
+OP2: Operand 2         X
+Adds the two operands and stores them in STR
+Binary:
+
+SUB (subtract)
+Arguments: 
+STR: Store to register
+OP1: Operand 1
+OP2: Operand 2
+Subtracts OP1 from OP2 and stores the result in STR
+
+LOR (logical or)
+Arguments: 
+STR: Store to register
+OP1: Operand 1
+OP2: Operand 2
+Bitwise ORs Operand1 and Operand2
+
+INC (increment)
+Arguments:
+STR
+Increments STR
+
+DEC (decrement)
+Arguments:
+STR
+Decrements STR
+
+NOT (logical not)
+Arguments
+STR
+OP1
+Bitwise logical negation of OP1 stored at STR
+
+MOV (move)
+Arguments:
+FROM 
+TO
+Copies value from FROM to TO.
+
+BNE (branch if negative)
+Arguments
+OP1
+OP2
+Subtracts OP1 from OP2 and branches to the location in JR if result is negative
+
+BEQ (branch if equal)
+Arguments
+OP1
+OP2
+Subtracts OP1 from OP2 and branches to the location in JR if result is exactly zero
+
+BLE (branch if less or equal)
+Arguments
+OP1
+OP2
+Subtracts OP1 from OP2 and branches to the location in JR if result is zero or negative;
+
+LLS (load less significant)
+Arguments:
+STR
+8 bit value
+overwrites the lsb of STR with the 8 bit value provided
+
+LMS (load most significant)
+Arguments:
+STR
+8 bit value
+overwrites the msb of STR with the 8 bit value provided
+
+PUSH (add and push)
+Arguments
+STR
+4 bit immediate
+decrements SP and writes STR + 4 bit immediate into location of SP
+
+POP (pop and add)
+Arguments
+STR
+4 bit immediate
+Loads 4 bit immediate plus the value at SP into STR and increments SP
+
+
+STRST (store at stack)
+Arguments:
+REG 
+8 bit signed immediateval
+store value of REG with an offset from the SP of +- 128.
+
+LDST (load from stack)
+Arguments:
+REG 
+8 bit signed immediateval
+load value of REG from memory at SP with a +- 128 offset.
+
+LDH (load from heap)
+Arguments:
+REG 
+8 bit signed immediateval
+load value of REG from memory at ML with a +- 128 offset.
+
+STH (store to heap)
+Arguments:
+REG 
+8 bit signed immediateval
+store value of REG with an offset from the ML of +- 128.
+
+NOOP (no operation)
+Arguments:
+None
+No operation is performed
+
+### NOTICE: THE FOLLOWING CONTENT IS DEPRECATED AND MAY CONTAIN MISLEADIN INFORMATION
 
 I am terrible writing formal documentation, so here is a more casual explaination of the cpu and its instruction set
 
