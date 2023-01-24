@@ -3,12 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-// POSIX
-#if defined _WIN32 || defined _WIN64
-    #include <Windows.h>
-#elif defined __linux__
-    #include <unistd>
-#endif
 
 #define RAMSIZE 65535
 #define REGISTERNUM 8

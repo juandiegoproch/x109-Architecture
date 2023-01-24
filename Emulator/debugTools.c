@@ -19,7 +19,7 @@ void securePrintRam(int location, int look_width)
 	int lowerBound = location-look_width > 0? location-look_width:0;
 	int upperBound = location+look_width > RAMSIZE? RAMSIZE:location+look_width;
 	
-	for (uint16_t i=lowerBound;i<=upperBound;i++)
+	for (int i=lowerBound;i<=upperBound;i++)
 	{
 		printf("0x%04X   0x%04X \n",i,memory[i]);
 	}

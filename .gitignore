@@ -1,2 +1,5 @@
 Emulator/xonemu.exe
 Emulator/.vscode/tasks.json
+testprograms/immediate_load.memimg
+Emulator/memdump.bin
+Emulator/xonemu.exe

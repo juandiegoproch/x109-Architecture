@@ -25,6 +25,9 @@ They also take a 4 bit ALU configuration.
     2       zero out operand1 if set
     3       negate operand1 if set
     4       carry in 1 to operand1 (if addition is selected)
+    The ALU performs the operations in the following order:
+
+    zero->negate->carryin->operation->flag determination
 
 The ALU instruction will perform the operation in the ALU. 
 
@@ -82,117 +85,151 @@ jump to the location specified on INTTABLE + (INTCODE-1).
 
 
 ADD (add)
-Arguments: 
+Arguments:             Binary Placeholder
 STR: Store to register S
 OP1: Operand 1         O
 OP2: Operand 2         X
 Adds the two operands and stores them in STR
 Binary:
+1SSS0000OOOXXX00
 
 SUB (subtract)
-Arguments: 
-STR: Store to register
-OP1: Operand 1
-OP2: Operand 2
+Arguments:             Binary Placeholder
+STR: Store to register S
+OP1: Operand 1         O
+OP2: Operand 2         X
 Subtracts OP1 from OP2 and stores the result in STR
+Binary:
+1SSS0011OOOXXX00
 
 LOR (logical or)
-Arguments: 
-STR: Store to register
-OP1: Operand 1
-OP2: Operand 2
+Arguments:             Binary Placeholder
+STR: Store to register  S
+OP1: Operand 1          O
+OP2: Operand 2          X
 Bitwise ORs Operand1 and Operand2
+Binary:
+1SSS1000OOOXXX00
 
 INC (increment)
-Arguments:
-STR
+Arguments:   Binary Placeholder
+STR          S
 Increments STR
+Binary:
+1SSS0001SSS00000
 
 DEC (decrement)
-Arguments:
-STR
+Arguments:   Binary Placeholder
+STR          S
 Decrements STR
+Binary:
+1SSS0110SSSSSS00
 
 NOT (logical not)
-Arguments
-STR
-OP1
+Arguments    Binary Placeholder:
+STR          S
+OP1          O
 Bitwise logical negation of OP1 stored at STR
+Binary:
+1SSS0010OOO00000
 
 MOV (move)
-Arguments:
-FROM 
-TO
+Arguments:  Binary Placeholder
+TO          T
+FROM        F
 Copies value from FROM to TO.
+1TTT0100000FFF00
 
 BNE (branch if negative)
-Arguments
-OP1
-OP2
+Arguments: Binary Placeholder
+OP1        O
+OP2        X
 Subtracts OP1 from OP2 and branches to the location in JR if result is negative
+Binary:
+10000011OOOXXX10
 
 BEQ (branch if equal)
-Arguments
-OP1
-OP2
+Arguments: Binary Placeholder
+OP1        O
+OP2        X
 Subtracts OP1 from OP2 and branches to the location in JR if result is exactly zero
+Binary:
+10000011OOOXXX01
 
 BLE (branch if less or equal)
-Arguments
-OP1
-OP2
+Arguments: Binary Placeholder
+OP1        O
+OP2        X
 Subtracts OP1 from OP2 and branches to the location in JR if result is zero or negative;
+Binary:
+10000011OOOXXX11
 
 LLS (load less significant)
-Arguments:
-STR
-8 bit value
+Arguments:  Binary Placeholder
+STR         S
+8 bit value B
 overwrites the lsb of STR with the 8 bit value provided
+Binary:
+0SSS0000BBBBBBBB
 
 LMS (load most significant)
-Arguments:
-STR
-8 bit value
+Arguments:  Binary Placeholder
+STR         S
+8 bit value B
 overwrites the msb of STR with the 8 bit value provided
+Binary:
+0SSS0100BBBBBBBB
 
 PUSH (add and push)
-Arguments
-STR
-4 bit immediate
+Arguments          Binary Placeholder
+STR                S
+4 bit immediate    B
 decrements SP and writes STR + 4 bit immediate into location of SP
+Binary:
+0SSS10100000BBBB
 
 POP (pop and add)
 Arguments
-STR
-4 bit immediate
+Arguments          Binary Placeholder
+STR                S
+4 bit immediate    B
 Loads 4 bit immediate plus the value at SP into STR and increments SP
-
+Binary:
+0SSS00100000BBBB
 
 STRST (store at stack)
-Arguments:
-REG 
-8 bit signed immediateval
+Arguments:                  Binary Placeholder
+REG                         R
+8 bit signed immediateval   B
 store value of REG with an offset from the SP of +- 128.
+Binary:
+0RRR1011BBBBBBBB
 
 LDST (load from stack)
-Arguments:
-REG 
-8 bit signed immediateval
+Arguments:                  Binary Placeholder
+REG                         R
+8 bit signed immediateval   B
 load value of REG from memory at SP with a +- 128 offset.
+0RRR0011BBBBBBBB
 
 LDH (load from heap)
-Arguments:
-REG 
-8 bit signed immediateval
+Arguments:                  Binary Placeholder
+REG                         R
+8 bit signed immediateval   B
 load value of REG from memory at ML with a +- 128 offset.
+Binary:
+0RRR0001BBBBBBBB
 
 STH (store to heap)
-Arguments:
-REG 
-8 bit signed immediateval
+Arguments:                  Binary Placeholder
+REG                         R
+8 bit signed immediateval   B
 store value of REG with an offset from the ML of +- 128.
+0RRR1001BBBBBBBB
 
 NOOP (no operation)
 Arguments:
 None
 No operation is performed
+Binary:
+0000000000000000

@@ -6,7 +6,7 @@
 #define MLOAD_CONFIG_STACKOP_MASK	0b0000001000000000
 #define MLOAD_CONFIG_STORE_MASK 	0b0000100000000000
 #define MLOAD_ADDRESSING_MASK		0b0000000100000000
-
+#define NEGATIVE_BIT_8 0b10000000
 
 #define CLR_MSB_MASK 0b0000000011111111
 #define CLR_LSB_MASK 0b1111111100000000
@@ -98,14 +98,20 @@ void executeMLoadInstruction(uint16_t instruction)
 	} 
 	else if (indirect_addressing) // Memory Operation 128W up/down
 	{
-		int signed_immediateval = immediate_val;
-			// is negative
-		if (immediate_val>>7)
+		// is negative
+		uint16_t memory_address;
+		if (immediate_val & NEGATIVE_BIT_8)
 		{
-			int signed_immediateval = - (~immediate_val + 1);
+			immediate_val = ~immediate_val; // two's compliment wizardry
+			immediate_val++;
+
+			memory_address = (stack_operation?registerop(ML,'r',0):registerop(ML,'r',0)) - immediate_val;
+		}
+		else
+		{
+			memory_address = (stack_operation?registerop(ML,'r',0):registerop(ML,'r',0)) + immediate_val;
 		}
 
-		uint16_t memory_address = (stack_operation?registerop(ML,'r',0):registerop(ML,'r',0)) + signed_immediateval;
 
 		if (store)
 		{
