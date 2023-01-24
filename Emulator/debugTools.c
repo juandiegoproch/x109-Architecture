@@ -5,14 +5,14 @@
 void printRegisterValues()
 {
 	printf("Register Values: \n");
-	printf("PC: %x \n",    registers[PC]);
-	printf("JR: %x \n",    registers[JR]);
-	printf("ML: %x \n",    registers[ML]);
-	printf("R2/SBP: %x \n",registers[R2]);
-	printf("R1: %x \n",    registers[R1]);
-	printf("R0: %x \n",    registers[R0]);
-	printf("SP: %x \n",    registers[SP]);
-	printf("ZR: %x \n",    registers[ZR]);
+	printf("PC: %x (int %d)\n",    registers[PC],registers[PC]);
+	printf("JR: %x (int %d)\n",    registers[JR],registers[JR]);
+	printf("ML: %x (int %d)\n",    registers[ML],registers[ML]);
+	printf("R2/SBP: %x (int %d)\n",registers[R2],registers[R2]);
+	printf("R1: %x (int %d)\n",    registers[R1],registers[R1]);
+	printf("R0: %x (int %d)\n",    registers[R0],registers[R0]);
+	printf("SP: %x (int %d)\n",    registers[SP],registers[SP]);
+	printf("ZR: %x (int %d)\n",    registers[ZR],registers[ZR]);
 }
 void securePrintRam(int location, int look_width)
 {
