@@ -24,3 +24,8 @@ void securePrintRam(int location, int look_width)
 		printf("0x%04X   0x%04X \n",i,memory[i]);
 	}
 }
+
+void securePrintRamDissasembly(int location, int look_width)
+{
+	securePrintRam(location,look_width);
+}
