@@ -53,6 +53,7 @@ int userInterruptHandler(int signum);
 void printRegisterValues();
 void securePrintRam(int location, int look_width);
 void securePrintRamDissasembly(int location, int look_width);
+void debugConsole();
 
 // Globals
 extern uint16_t memory[RAMSIZE];
