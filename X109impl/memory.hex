@@ -1,0 +1,21 @@
+// memory.hex
+// 1. LDL R1, 0x10 (Load 16 into R1) -> [0][STR:011][CFG:0000][8b:00010000]
+3010
+// 2. LDM R1, 0xAB (Load 0xAB into upper byte of R1) -> [0][STR:011][CFG:0100][8b:10101011]
+34AB
+// 3. ADI R2, R1, 0x05 (R2 = R1 + 5) -> [1][STR:100][CFG:0001][OP1:011][OP2:101][0] (Note: OP2 is immediate field)
+C17A
+// 4. ADD R0, R1, R2 (R0 = R1 + R2) -> [1][STR:010][CFG:0000][OP1:011][OP2:100][0]
+A038
+// 5. NOT R2, R2 (Invert R2) -> [1][STR:100][CFG:0010][OP1:100][OP2:000][0]
+C240
+// 6. PUSH R1 (Push R1 to Stack) -> [0][OP1:011][CFG:1010][8b:00000000]
+3A00
+// 7. ST R2, 0x20 (Store R2 to Mem[32]) -> [0][OP1:100][CFG:1001][8b:00100000]
+4920
+// 8. POP R0 (Pop Stack to R0) -> [0][OP1:010][CFG:0010][8b:11111110]
+22FE
+// 9. SUB R0, R0, R1 (Compare/Sub) -> [1][STR:010][CFG:0011][OP1:010][OP2:011][0]
+A326
+// 10. BEQ Target (Jump if Zero) -> [1][000][CFG:0011][OP1:010][OP2:011][01] (JCND=01)
+8327
